@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-service
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+    # we can hosts many apps inside a single kube cluster
+    # therefore we specify which .com we're using
+    - host: ticketing.dev
+      http:
+        paths:
+          # path order matters, it will try to match the path
+          # from top to bottom
+          - path: /api/users/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-srv
+                port:
+                  number: 3000
+         
