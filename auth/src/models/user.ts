@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { Password } from "../services/password";
 
 // An interface that describes the properties
 // that are required to create a new User
@@ -31,6 +32,16 @@ const userSchema = new mongoose.Schema({
     required: true,
   }
 });
+
+// hashes the password before it is saved to the database
+userSchema.pre('save', async function(done) {
+  if (this.isModified('password')) {
+    // gets the password from the UserDoc
+    const hashed = await Password.toHash(this.get('password'));
+    this.set('password', hashed);
+  }
+  done();
+})
 
 // the purpose of this is to help typescript understand
 // the attributes that are required to create a new User
