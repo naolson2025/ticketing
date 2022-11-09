@@ -31,6 +31,16 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   }
+}, {
+  // transform the output of the document so we're not returning the password
+  toJSON: {
+    transform(doc, ret) {
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.password;
+      delete ret.__v;
+    }
+  }
 });
 
 // hashes the password before it is saved to the database
