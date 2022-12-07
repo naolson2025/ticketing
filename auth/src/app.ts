@@ -20,8 +20,9 @@ app.use(cookieSession({
   // set it to false here because we are using JWT inside the cookie
   // the JWT is already encrypted
   signed: false,
-  // these means that the cookie can only be used over https
-  secure: true
+  // if true means that the cookie can only be used over https
+  // we want this to be false in a test environment to jest can check the cookie
+  secure: process.env.NODE_ENV !== 'test'
 }))
 
 app.use(currentUserRouter);
