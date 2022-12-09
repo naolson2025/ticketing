@@ -8,6 +8,7 @@ build:
   local:
     push: false
   artifacts:
+  # skaffold will sync the auth image with the auth folder
     - image: nick2025/ticketing-auth
       context: auth
       docker:
@@ -15,4 +16,13 @@ build:
       sync:
         manual:
           - src: 'src/**/*.ts'
+            dest: .
+  # skaffold will sync the client image with the client folder
+    - image: nick2025/client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '**/*.js'
             dest: .
