@@ -26,3 +26,12 @@ build:
         manual:
           - src: '**/*.js'
             dest: .
+  # skaffold will sync the tickets image with the tickets folder
+    - image: nick2025/tickets
+      context: tickets
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
