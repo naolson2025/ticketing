@@ -1,10 +1,31 @@
 import express, { Request, Response } from 'express';
-import { requireAuth } from '@nao2025tickets/common';
+import { body } from 'express-validator';
+import { requireAuth, validateRequest } from '@nao2025tickets/common';
+import { Ticket } from '../models/ticket';
 
 const router = express.Router();
 
-router.post('/api/tickets', requireAuth, (req: Request, res: Response) => {
-  res.sendStatus(200);
+router.post('/api/tickets', requireAuth, [
+  // validation that sets an error on the incoming request
+  // validateRequest will then throw the error
+  body('title')
+    .not()
+    .isEmpty()
+    .withMessage('Title is required'),
+  body('price')
+    .isFloat({ gt: 0 })
+    .withMessage('Price must be greater than 0')
+], validateRequest, async (req: Request, res: Response) => {
+  const { title, price } = req.body;
+
+  const ticket = Ticket.build({
+    title,
+    price,
+    userId: req.currentUser!.id
+  });
+  await ticket.save();
+
+  res.status(201).send(ticket);
 })
 
 export { router as createTicketRouter };

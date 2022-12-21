@@ -3,10 +3,11 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
 import { app } from '../app';
+import jwt from 'jsonwebtoken';
 
 // help typescript to understand that we have a declared a global signin function
 declare global {
-  var signup: () => Promise<string[]>;
+  var signup: () => string[];
 }
 
 let mongo: any;
@@ -39,19 +40,24 @@ afterAll(async () => {
 })
 
 // setting up a global variable, it will only be available in the test environment
-// The purpose of this global function is to sign in a user and get the cookie
-// this way we don't need to manually sign in a user in each test
-global.signup = async () => {
-  const email = 'test@test.com'
-  const password = 'password'
+// The purpose of this global function is to return a cookie
+// for a user that has been signed up
 
-  const response = await request(app)
-    .post('/api/users/signup')
-    .send({
-      email, password
-    })
-    .expect(201)
-
-  const cookie = response.get('Set-Cookie')
-  return cookie
+// create a fake cookie for use in testing
+global.signup = () => {
+  // buid a JWT payload { id, email }
+  const payload = {
+    id: new mongoose.Types.ObjectId().toHexString(),
+    email: 'test@test.com'
+  }
+  // create the JWT
+  const token = jwt.sign(payload, process.env.JWT_KEY!);
+  // build session object { jwt: MY_JWT }
+  const session = { jwt: token };
+  // turn that session into JSON
+  const sessionJSON = JSON.stringify(session);
+  // take JSON and encode it as base64
+  const base64 = Buffer.from(sessionJSON).toString('base64');
+  // return a string thats the cookie with the encoded data
+  return [`session=${base64}`];
 }
