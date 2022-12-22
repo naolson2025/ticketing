@@ -2,6 +2,10 @@ import nats from 'node-nats-streaming';
 
 // stan is nats spelled backwards
 // its the community standard for naming the nats client
+// here abc is the client id, nats will keep a list of all the clients
+// that are connected to the cluster
+// if we want to scale our app, we can have multiple instances of publisher
+// and each instance will need a different client id
 const stan = nats.connect('ticketing', 'abc', {
   url: 'http://localhost:4222',
 });
