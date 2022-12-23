@@ -22,7 +22,9 @@ spec:
         args: [
           "-p", "4222",
           "-m", "8222",
+          # -hbi is the interval at which the server will send heartbeats to its clients
           "-hbi", "5s",
+          # -hbt is the timeout after which the server will consider a client to be dead
           "-hbt", "5s",
           "-hbf", "2",
           "-SD",
@@ -37,10 +39,16 @@ spec:
   selector:
     app: nats
   ports:
+      # this is the port that the nats server is listening on
+      # we can port forward this port to test against it
     - name: client
       protocol: TCP
       port: 4222
       targetPort: 4222
+      # this is the port that we will use to connect to the nats server
+      # from the outside world, so we can look at the traffic
+      # need to port forward this port to be able to see the traffic
+      # http://localhost:8222/streaming can view info here in the browser
     - name: monitoring
       protocol: TCP
       port: 8222
