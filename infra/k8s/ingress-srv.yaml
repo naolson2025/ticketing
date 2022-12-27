@@ -29,6 +29,14 @@ spec:
                 name: tickets-srv
                 port:
                   number: 3000
+          # route handler for our orders service
+          - path: /api/orders/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: orders-srv
+                port:
+                  number: 3000
           # this is a catch all path that will direct to the client
           - path: /?(.*)
             pathType: Prefix
