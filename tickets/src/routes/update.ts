@@ -7,6 +7,8 @@ import {
   NotAuthorizedError,
 } from '@nao2025tickets/common';
 import { Ticket } from '../models/ticket';
+import { TicketUpdatedPublisher } from '../events/publishers/ticket-updated-publisher';
+import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
 
@@ -35,7 +37,19 @@ router.put(
       title: req.body.title,
       price: req.body.price,
     });
+    // one corner we are cutting here:
+    // is that a ticket could get saved and the event could fail to publish.
+    // to solve this use in a production grade app
+    // we would use database transactions
+    // to make sure that both the ticket and the event are saved
+    // or neither are saved
     await ticket.save();
+    new TicketUpdatedPublisher(natsWrapper.client).publish({
+      id: ticket.id,
+      title: ticket.title,
+      price: ticket.price,
+      userId: ticket.userId,
+    });
 
     res.send(ticket);
   }

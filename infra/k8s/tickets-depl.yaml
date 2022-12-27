@@ -16,6 +16,18 @@ spec:
         - name: tickets
           image: nick2025/tickets
           env:
+            # here we use the name of the pod as the client id
+            # this will prevent any duplicate client id errors
+            # so we can create multiple instances of the tickets service
+            # and they will all be able to connect to the NATS server
+            - name: NATS_CLIENT_ID
+              valueFrom: 
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NATS_URL
+              value: nats://nats-srv:4222
+            - name: NATS_CLUSTER_ID
+              value: ticketing
             - name: MONGO_URI
               value: mongodb://tickets-mongo-srv:27017/tickets
             - name: JWT_KEY
