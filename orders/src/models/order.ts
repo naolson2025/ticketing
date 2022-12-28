@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 import { OrderStatus } from '@nao2025tickets/common';
 import { TicketDoc } from './ticket';
 
@@ -19,6 +20,7 @@ interface OrderDoc extends mongoose.Document {
   status: OrderStatus;
   expiresAt: Date;
   ticket: TicketDoc;
+  version: number;
 }
 
 interface OrderModel extends mongoose.Model<OrderDoc> {
@@ -54,6 +56,9 @@ const orderSchema = new mongoose.Schema(
     },
   }
 );
+
+orderSchema.set('versionKey', 'version');
+orderSchema.plugin(updateIfCurrentPlugin);
 
 // this is what gives us the build method on the Order model
 orderSchema.statics.build = (attrs: OrderAttrs) => {
