@@ -122,3 +122,39 @@ it('publishes an event', async () => {
 
   expect(natsWrapper.client.publish).toHaveBeenCalled();
 });
+
+it('rejects updates if the ticket is reserved', async () => {
+  const cookie = global.signup();
+  // create a ticket as a seller
+  const response = await request(app)
+    .post('/api/tickets')
+    .set('Cookie', cookie)
+    .send({
+      title: 'concert',
+      price: 20,
+    });
+
+  // fetch the ticket to get the id
+  const ticket = await request(app)
+    .get(`/api/tickets/${response.body.id}`)
+    .send();
+
+  const ticketId = ticket.body.id;
+
+  // make a request to order this ticket as a buyer
+  const order = await request(app)
+    .post('/api/orders')
+    .set('Cookie', global.signup())
+    .send({ ticketId });
+
+  // seller trys to update the ticket
+  // should fail because the buyer has an order in progress
+  await request(app)
+    .put(`/api/tickets/${response.body.id}`)
+    .set('Cookie', cookie)
+    .send({
+      title: 'new concert',
+      price: 1000,
+    })
+    .expect(400);
+});

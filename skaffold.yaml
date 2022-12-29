@@ -44,3 +44,12 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
+  # skaffold will sync the expiration image with the expiration folder
+    - image: nick2025/expiration
+      context: expiration
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
