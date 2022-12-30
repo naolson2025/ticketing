@@ -18,7 +18,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@nao2025tickets/common": "^1.0.13",
+    "@nao2025tickets/common": "^1.0.14",
     "@types/bull": "^4.10.0",
     "bull": "^4.10.2",
     "node-nats-streaming": "^0.3.2",

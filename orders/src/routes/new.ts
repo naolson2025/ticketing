@@ -15,10 +15,12 @@ import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
 
-// 15 minutes, 1 min for testing
+// 15 minutes
 // better practice would be to put this in an environment variable
 // so we can change the window of time without having to redeploy
-const EXPIRATION_WINDOW_SECONDS = 1 * 60;
+// const EXPIRATION_WINDOW_SECONDS = 15 * 60;
+// ** for testing purposes, we will set it to 15 seconds
+const EXPIRATION_WINDOW_SECONDS = 15;
 
 // note on line: .custom((input: string) => mongoose.Types.ObjectId.isValid(input))
 // we validate that the id is a valid mongo id.

@@ -14,6 +14,15 @@ spec:
         paths:
           # path order matters, it will try to match the path
           # from top to bottom
+          # Ingress will route to the kube service that matches the path
+          - path: /api/payments/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: payments-srv
+                port:
+                  number: 3000
+          # route handler for auth service
           - path: /api/users/?(.*)
             pathType: Prefix
             backend:
