@@ -11,11 +11,13 @@ import Header from '../components/header';
 const AppComponent = ({ Component, pageProps, currentUser }) => {
   return (
     <div>
-      <Header currentUser={currentUser}/>
-      <Component {...pageProps} />
+      <Header currentUser={currentUser} />
+      <div className='container'>
+        <Component currentUser={currentUser} {...pageProps} />
+      </div>
     </div>
-  )
-}
+  );
+};
 
 // when we call getInitialProps on the app component
 // other instances of getInitialProps will not be called
@@ -30,7 +32,11 @@ AppComponent.getInitialProps = async (appContext) => {
   // and we return an empty object
   let pageProps = {};
   if (appContext.Component.getInitialProps) {
-    pageProps = await appContext.Component.getInitialProps(appContext.ctx)
+    pageProps = await appContext.Component.getInitialProps(
+      appContext.ctx,
+      client,
+      data.currentUser
+    );
   }
 
   return {

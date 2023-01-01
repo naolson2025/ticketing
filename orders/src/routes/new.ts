@@ -19,8 +19,8 @@ const router = express.Router();
 // better practice would be to put this in an environment variable
 // so we can change the window of time without having to redeploy
 // const EXPIRATION_WINDOW_SECONDS = 15 * 60;
-// ** for testing purposes, we will set it to 15 seconds
-const EXPIRATION_WINDOW_SECONDS = 15;
+// ** for testing purposes, we will set it to 60 seconds
+const EXPIRATION_WINDOW_SECONDS = 60;
 
 // note on line: .custom((input: string) => mongoose.Types.ObjectId.isValid(input))
 // we validate that the id is a valid mongo id.
